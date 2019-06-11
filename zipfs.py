@@ -84,25 +84,29 @@ def getJ1(w, q):
     s = getIndices(w, j)
     return getSubset(words, s[1])
 
+# TODO Create class of this
+
+
+if __name__ == '__main__':
 
 
 
-csv_path_cleaned = 'files/data_cleaned.txt'
-df = read_csv(csv_path_cleaned, header=None, names=['Category', 'Text'], sep=' ')
-X = df['Text']
-y = df['Category']
+    csv_path_cleaned = 'files/data_cleaned.txt'
+    df = read_csv(csv_path_cleaned, header=None, names=['Category', 'Text'], sep=' ')
+    X = df['Text']
+    y = df['Category']
 
-df2 = getData()
-word_list = simple_clean(df2.Text[0])
+    df2 = getData()
+    word_list = simple_clean(df2.Text[0])
 
-words = get_counter(word_list, split=False)
-words2 = get_counter(X[0], split=True)
+    words = get_counter(word_list, split=False)
+    words2 = get_counter(X[0], split=True)
 
-w = np.array([w[1] for w in words])
+    w = np.array([w[1] for w in words])
 
-#for q in [2, 3, 4, 5, 6]:
-for q in [2]:
-    j = getJ(w, q)
-    s = getIndices(w, j)
-    subs, lens = checkCard(w, s)
-    print(q, lens)
+    #for q in [2, 3, 4, 5, 6]:
+    for q in [2]:
+        j = getJ(w, q)
+        s = getIndices(w, j)
+        subs, lens = checkCard(w, s)
+        print(q, lens)
