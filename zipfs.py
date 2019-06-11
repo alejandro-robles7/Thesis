@@ -87,6 +87,53 @@ def getJ1(w, q):
 # TODO Create class of this
 
 
+class Zipf:
+
+    target_column = ''
+
+    def __init__(self, q=2):
+        self.q = q
+
+    def fit(self, dataframe, target_column='Text'):
+        self.target_column = target_column
+        self.dataframe = dataframe
+
+    def transform(self, output_column='Clean_Text'):
+        self.dataframe[output_column] = self._vectorize()
+
+    def _vectorize(self):
+        pass
+
+    def _getK(q, n=3):
+        return (pow(q, n) - 1) / (q - 1)
+
+    def _getJ(arr, q, n=3):
+        c = arr.sum()
+        k = getK(q, n)
+        j2 = c / k
+        j1 = j2 * q
+        j0 = j1 * q
+        return [j0, j1, j2]
+
+    def findindex(arr, value):
+        return (np.abs(arr.cumsum() - value)).argmin()
+
+    def _getIndices(arr, j):
+        range0 = findindex(arr, j[0]) + 1
+        range1 = findindex(arr[range0 + 1:], j[1]) + 1
+        return [(0, range0), (range0, range0 + range1), (range0 + range1, len(arr))]
+
+    def getSubset(arr, tup):
+        return arr[tup[0]:tup[1]]
+
+    def checkCard(arr, indices):
+        subs = [getSubset(arr, ind) for ind in indices]
+        lens = [len(sub) for sub in subs]
+        return subs, lens
+
+
+
+
 if __name__ == '__main__':
 
 
