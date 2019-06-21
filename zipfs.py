@@ -102,12 +102,16 @@ class Zipf:
         self.dataframe[output_column] = self._vectorize()
 
     def _vectorize(self):
-        pass
+        clean_text = []
+        for text in self.dataframe[self.target_column]:
+            clean_text.append(getJ1())
 
-    def _getK(q, n=3):
+    @staticmethod
+    def getK(q, n=3):
         return (pow(q, n) - 1) / (q - 1)
 
-    def _getJ(arr, q, n=3):
+    @staticmethod
+    def getJ(arr, q, n=3):
         c = arr.sum()
         k = getK(q, n)
         j2 = c / k
@@ -115,21 +119,40 @@ class Zipf:
         j0 = j1 * q
         return [j0, j1, j2]
 
+    @staticmethod
     def findindex(arr, value):
         return (np.abs(arr.cumsum() - value)).argmin()
 
-    def _getIndices(arr, j):
+    @staticmethod
+    def getIndices(arr, j):
         range0 = findindex(arr, j[0]) + 1
         range1 = findindex(arr[range0 + 1:], j[1]) + 1
         return [(0, range0), (range0, range0 + range1), (range0 + range1, len(arr))]
 
+    @staticmethod
     def getSubset(arr, tup):
         return arr[tup[0]:tup[1]]
 
+    @staticmethod
     def checkCard(arr, indices):
         subs = [getSubset(arr, ind) for ind in indices]
         lens = [len(sub) for sub in subs]
         return subs, lens
+
+    @staticmethod
+    def getJ1(text, q, split=False):
+        words_dict = get_counter(text, split)
+        word_counts = np.array([word[1] for word in words_dict])
+        j = getJ(word_counts, q)
+        s = getIndices(word_counts, j)
+        return getSubset(words_dict, s[1])
+
+    @staticmethod
+    def get_counter(words, split=False):
+        if split:
+            words = words.split()
+        return (Counter(words).most_common())
+
 
 
 
@@ -150,6 +173,10 @@ if __name__ == '__main__':
     words2 = get_counter(X[0], split=True)
 
     w = np.array([w[1] for w in words])
+
+
+
+
 
     #for q in [2, 3, 4, 5, 6]:
     for q in [2]:
