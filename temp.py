@@ -3,6 +3,7 @@ from math import pow
 from collections import Counter
 from json import loads
 from nltk.corpus import stopwords
+from langdetect import detect
 import numpy as np
 
 def getData():
@@ -36,6 +37,20 @@ class Zipf:
         self._vectorize()
         self._cleanText()
 
+    def filter_by_language(self, lang='english', col_name=None):
+        if col_name:
+            coltarget=col_name
+        else:
+            coltarget=self.target_column
+
+        bool_index = [False] * self.dataframe.shape[0]
+        for i, text in enumerate(self.dataframe[coltarget]):
+            try:
+                bool_index[i] = detect(text) == lang
+            except:
+                pass
+        self.dataframe = self.dataframe.loc[bool_index]
+
     def _vectorize(self):
         clean_text = []
         if self.lower:
@@ -48,6 +63,7 @@ class Zipf:
             clean_text.append(temp)
         self.dataframe[self.vector_column] = clean_text
 
+
     def _cleanText(self):
         clean_text = []
         for text_vector in self.dataframe[self.vector_column]:
@@ -59,6 +75,8 @@ class Zipf:
                 clean_row = np.nan
             clean_text.append(clean_row)
         self.dataframe[self.output_column] = clean_text
+
+
 
     @staticmethod
     def getK(q, n=3):
@@ -121,3 +139,18 @@ if __name__ == '__main__':
     z = Zipf(q=2)
     z.fit(df)
     z.transform()
+
+
+    def _filter_by_language(df, lang='en', colname=None):
+        if colname:
+            coltarget=colname
+        else:
+            coltarget= 'Clean_Text'
+
+        bool_index = [False] * df.shape[0]
+        for i, text in enumerate(df[coltarget]):
+            try:
+                bool_index[i] = detect(text) == lang
+            except:
+                pass
+        return df.loc[bool_index]
