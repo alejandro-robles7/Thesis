@@ -141,16 +141,4 @@ if __name__ == '__main__':
     z.transform()
 
 
-    def _filter_by_language(df, lang='en', colname=None):
-        if colname:
-            coltarget=colname
-        else:
-            coltarget= 'Clean_Text'
 
-        bool_index = [False] * df.shape[0]
-        for i, text in enumerate(df[coltarget]):
-            try:
-                bool_index[i] = detect(text) == lang
-            except:
-                pass
-        return df.loc[bool_index]
