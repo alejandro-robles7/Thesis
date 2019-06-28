@@ -37,7 +37,7 @@ class Zipf:
         self._vectorize()
         self._cleanText()
 
-    def filter_by_language(self, lang='english', col_name=None):
+    def filter_by_language(self, lang='en', col_name=None):
         if col_name:
             coltarget=col_name
         else:
