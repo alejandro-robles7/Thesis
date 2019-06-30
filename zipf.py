@@ -6,7 +6,7 @@ from nltk.corpus import stopwords
 from langdetect import detect
 import numpy as np
 
-def getData(path='files/scrapedsites.json'):
+def getData(path='scrapedsites.json'):
     data = []
     with open(path) as f:
         for line in f:
@@ -134,7 +134,8 @@ class Zipf:
 
 if __name__ == '__main__':
 
-    df = getData()
+    path = 'files/scrapedsites.json'
+    df = getData(path)
     z = Zipf(q=2)
     z.fit(df)
     z.transform()
