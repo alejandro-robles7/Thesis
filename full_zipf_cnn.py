@@ -221,7 +221,7 @@ def get_embedding_matrix(word_index, embeddings_index, embedding_dim, max_num_wo
             embedding_matrix[i] = embedding_vector
     return embedding_matrix, num_words
 
-def generate_model(num_words, embedding_matrix, labels_index, embedding_dim, max_sequence_length, dropout=0.30):
+def generate_model(num_words, embedding_matrix, labels_index, embedding_dim, max_sequence_length, dropout=0.30, optimizer='rmsprop'):
     # load pre-trained word embeddings into an Embedding layer
     # note that we set trainable = False so as to keep the embeddings fixed
     embedding_layer = Embedding(num_words,
@@ -246,7 +246,7 @@ def generate_model(num_words, embedding_matrix, labels_index, embedding_dim, max
 
     model = Model(sequence_input, preds)
     model.compile(loss='categorical_crossentropy',
-                  optimizer='rmsprop',
+                  optimizer=optimizer,
                   metrics=['acc'])
 
     print(model.summary())
@@ -327,11 +327,9 @@ def find_q():
 
     return q_best, accuracy_best
 
-def start_process(df, q, batch_size, epochs, dropout):
+def start_process(df, q, embedding_index, batch_size, epochs, dropout, optimizer):
     zipf_data = use_Zipf(df, q)
 
-    # Get Embeddings
-    embedding_index = get_embedding_indices(embeddings_path)
 
     labels_index = {'games & toys' : 0, 'sports' : 1, 'travel' : 2, 'food & drink' : 3}
 
@@ -352,7 +350,7 @@ def start_process(df, q, batch_size, epochs, dropout):
 
     # Generate Model
     model = generate_model(num_words, embedding_matrix, labels_index, embedding_dim=EMBEDDING_DIM,
-                           max_sequence_length=MAX_SEQUENCE_LENGTH, dropout=dropout)
+                           max_sequence_length=MAX_SEQUENCE_LENGTH, dropout=dropout, optimizer=optimizer)
 
     # Train Model
     history = train_model(model, x_train, y_train, x_val, y_val, batch_size=batch_size, epochs=epochs)
