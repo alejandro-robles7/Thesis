@@ -58,7 +58,7 @@ def save_model(model, path):
     with open(path, 'wb') as file:
         pickle.dump(model, file)
 
-def get_embeddings(path='/Users/alexballack13/PycharmProjects/Thesis/files/doc_embeddings.npy'):
+def get_embeddings(path='/Users/alejandro.robles/PycharmProjects/Thesis/files/doc_embeddings.npy'):
     return load(path)
 
 
@@ -72,5 +72,5 @@ if __name__ == '__main__':
     model = train_model(X_train_new, y_train)
 
     accuracy=calc_accuracy(model, X_test_new, y_test)
-    save_model(model, path='files/SVM_spacy_embeddings.pkl')
+    #save_model(model, path='files/SVM_spacy_embeddings.pkl')
 
