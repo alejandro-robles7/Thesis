@@ -5,7 +5,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics import accuracy_score, classification_report
 from sklearn.pipeline import Pipeline
-from sklearn.linear_model import SGDClassifier
+from sklearn.linear_model import SGDClassifier, LogisticRegression
 from sklearn.feature_extraction.text import TfidfTransformer
 
 csv_path_cleaned = 'files/data_cleaned.txt'
@@ -24,7 +24,7 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_
 sgd_linear = Pipeline((('vect', CountVectorizer()),
                        ('tfidf', TfidfTransformer()),
                        ('clf',
-                        SGDClassifier(loss='hinge', penalty='l2', alpha=1e-4, random_state=42, max_iter=100, tol=1e-3
+                        LogisticRegression(multi_class='multinomial', solver='lbfgs'
                         ))))
 
 #train the model
