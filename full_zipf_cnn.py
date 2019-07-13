@@ -12,6 +12,18 @@ from keras.layers import Dense, Input, GlobalMaxPooling1D, Conv1D, MaxPooling1D,
 from keras.models import Model
 from keras.initializers import Constant
 from nltk import download
+from pickle import dump, load
+
+
+def save_history(history_history, path):
+    with open(path, 'wb') as f:
+        dump(history_history, f)
+
+
+def get_history(path):
+    with open(path, 'rb') as pickle_file:
+        content = load(pickle_file)
+    return content
 
 download('stopwords')
 
@@ -370,7 +382,7 @@ if __name__ == '__main__':
 
     # Paths
     json_path = 'scrapedsites.json'
-    data_path = 'english_sites.pkl'
+    data_path = '/Users/alexballack13/Documents/Thesis/files/english_sites.pkl'
     embeddings_path = 'glove.6B.300d.txt'
 
     # Zipf's Law Parameter
@@ -378,6 +390,10 @@ if __name__ == '__main__':
 
     # Get English sites
     df = get_data(data_path)
+
+    # Process more
+    df['word_count'] = [len(e) for e in df.Text.str.split(' ')]
+    df = df[df.word_count > 100]
 
     # Use Zipf's Law to preprocess text
     zipf_data = use_Zipf(df, q)
@@ -406,5 +422,8 @@ if __name__ == '__main__':
 
     # Train Model
     history = train_model(model, x_train, y_train, x_val, y_val, batch_size=512, epochs=20)
+
+
+
 
 
