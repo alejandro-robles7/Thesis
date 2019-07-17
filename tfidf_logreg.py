@@ -3,7 +3,6 @@
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.pipeline import Pipeline
 from sklearn.feature_extraction.text import TfidfTransformer
-
 from glove_vectors_logreg import *
 
 def model_pipe(binary=True):
