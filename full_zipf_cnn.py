@@ -372,6 +372,23 @@ def start_process(df, q, embedding_index, batch_size, epochs, dropout, optimizer
 
     return accuracy
 
+def binarize_ind(data, other_cat=None, main_cat='__label__sports', one_vs_all=False):
+    main_ind = data == main_cat
+    if one_vs_all:
+        other_ind = ~main_ind
+
+    elif other_cat:
+        other_ind = data == other_cat
+
+    else:
+        other_ind = None
+
+    return main_ind, other_ind
+
+def mask_label(labels, ind, new_label='__label__other'):
+    labels[ind] = new_label
+    return labels
+
 if __name__ == '__main__':
 
     # Parameters for model
