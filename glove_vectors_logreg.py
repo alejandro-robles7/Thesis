@@ -36,8 +36,10 @@ def split_dataset(X_input, y_input):
 def train_model(X_input, y_input, svm_log='log'):
     if svm_log == 'log':
         classifier = LogisticRegression(multi_class='multinomial', solver='lbfgs')
+    elif svm_log == 'log_binary':
+        classifier = LogisticRegression()
     else:
-        classifier = SGDClassifier(loss = "hinge", penalty="l2", max_iter = 100, shuffle=True)
+        classifier = SGDClassifier(loss="hinge", penalty="l2", max_iter = 100, shuffle=True)
     classifier.fit(X_input, y_input)
     return classifier
 
@@ -61,16 +63,45 @@ def save_model(model, path):
 def get_embeddings(path='/Users/alejandro.robles/PycharmProjects/Thesis/files/doc_embeddings.npy'):
     return load(path)
 
+def binarize_ind(data, other_cat=None, main_cat='__label__sports', one_vs_all=False):
+    main_ind = data == main_cat
+    if one_vs_all:
+        other_ind = ~main_ind
+
+    elif other_cat:
+        other_ind = data == other_cat
+
+    else:
+        other_ind = None
+
+    return main_ind, other_ind
+
+def train_pipeline(x, y, svm_log='log'):
+    X_train, X_test, y_train, y_test = split_dataset(x, y)
+    X_train_new, X_test_new = normalize_data(X_train, X_test)
+    model = train_model(X_train_new, y_train, svm_log=svm_log)
+    return calc_accuracy(model, X_test_new, y_test), model
+
+def mask_label(labels, ind, new_label='__label__other'):
+    labels[ind] = new_label
+    return labels
+
+
+
 
 if __name__ == '__main__':
     csv_path_cleaned = 'files/data_cleaned.txt'
+    model_type = 'log_binary'
+    save_model_flag = False
+
     X, y = load_data(csv_path_cleaned)
     sentence_embeddings = get_embeddings()
 
-    X_train, X_test, y_train, y_test = split_dataset(sentence_embeddings, y)
-    X_train_new, X_test_new = normalize_data(X_train, X_test)
-    model = train_model(X_train_new, y_train)
+    if model_type == 'log_binary':
+        sports_ind, other_ind = binarize_ind(y, one_vs_all=True)
+        y = mask_label(y, other_ind)
 
-    accuracy=calc_accuracy(model, X_test_new, y_test)
-    #save_model(model, path='files/SVM_spacy_embeddings.pkl')
+    accuracy, model = train_pipeline(sentence_embeddings, y, svm_log=model_type)
 
+    if save_model_flag:
+        save_model(model, path='temp_model.pkl')
