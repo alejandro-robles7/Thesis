@@ -1,6 +1,10 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy import special
+from math import exp
+
+def sigmoid(s):
+    return 1 / (1 + exp(-s))
 
 
 a = 2. # parameter
@@ -18,3 +22,10 @@ plt.xscale('log')
 plt.yscale('log')
 plt.scatter(x, y, color='r')
 plt.savefig('logscale.png')
+
+x = np.arange(-10., 10.)
+y = np.array([sigmoid(s) for s in x])
+plt.plot(x, y)
+plt.ylabel(r'$\theta$')
+plt.xlabel('s')
+plt.savefig('sigmoid.png')
