@@ -389,6 +389,14 @@ def mask_label(labels, ind, new_label='__label__other'):
     labels[ind] = new_label
     return labels
 
+
+def binarize_dataframe(df, target_col='Category'):
+    X, y = df['Clean_Text'], df['Category']
+    sports_ind, other_ind = binarize_ind(data=y, main_cat='sports', one_vs_all=True)
+    y = mask_label(y, other_ind, new_label='other')
+    df[target_col] = y
+    return df
+
 if __name__ == '__main__':
 
     # Parameters for model
